@@ -9,7 +9,13 @@ const pkg = require('./package.json')
 
 const input = 'src/index.ts'
 
+// Peer dependencies.
+// e.g. ['react']
 const external = []
+
+// A mapping of externals to global names for a UMD build.
+// e.g. { react: 'React' }
+const globals = {}
 
 const plugins = [
     // Allow json resolution
@@ -23,24 +29,31 @@ const plugins = [
     // https://github.com/rollup/rollup-plugin-node-resolve#usage
     resolve(),
     // Resolve source maps to the original source
-    sourceMaps()
+    sourceMaps(),
 ]
+
+const watch = {
+    include: 'src/**',
+}
+
+const commonOptions = {
+    input,
+    external,
+    plugins,
+    watch,
+}
 
 export default [
     // UMD build for browsers.
     {
-        input,
-        external,
+        ...commonOptions,
         output: {
             name: camelCase(pkg.name),
             file: pkg.browser,
+            globals,
             format: 'umd',
-            sourcemap: true
+            sourcemap: true,
         },
-        watch: {
-            include: 'src/**'
-        },
-        plugins
     },
     // CommonJS (for Node) and ES module (for bundlers) build.
     // (We could have three entries in the configuration array
@@ -49,15 +62,10 @@ export default [
     // an array for the `output` option, where we can specify
     // `file` and `format` for each target)
     {
-        input,
-        external,
+        ...commonOptions,
         output: [
             { file: pkg.main, format: 'cjs', sourcemap: true },
-            { file: pkg.module, format: 'es', sourcemap: true }
+            { file: pkg.module, format: 'es', sourcemap: true },
         ],
-        watch: {
-            include: 'src/**'
-        },
-        plugins
-    }
+    },
 ]

@@ -26,7 +26,7 @@
         "start": "rollup -c rollup.config.ts -w",
         "test": "jest",
         "test:watch": "jest --watch",
-        "test:prod": "npm run lint && npm run test -- --coverage --no-cache",
+        "test:prod": "npm run format -- --list-different && npm run lint && npm run test -- --coverage --no-cache",
         "commit": "git-cz",
         "semantic-release": "semantic-release",
         "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
@@ -59,7 +59,14 @@
             "jsx"
         ],
         "coveragePathIgnorePatterns": [
-            "/node_modules/"
+            "/node_modules/",
+            "/dist/",
+            "/coverage/"
+        ],
+        "testPathIgnorePatterns": [
+            "/node_modules/",
+            "/dist/",
+            "/coverage/"
         ],
         "coverageThreshold": {
             "global": {
@@ -72,6 +79,7 @@
         "collectCoverage": true
     },
     "prettier": {
+        "trailingComma": "all",
         "semi": false,
         "singleQuote": true,
         "printWidth": 100,
